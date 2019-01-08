@@ -1,0 +1,29 @@
+{
+  "AppTitle": "Сдать Кровь",
+
+  "GreetingText": "Добро пожаловать!",
+  "InfoText": "Здесь Вы можете найти пункты сдачи крови в Вашем городе и получить всю необходимую информацию о донорстве крови.",
+  "TextButtonNext": "Продолжить",
+  "TextButtonGetInfo": "Подробнее о донорстве",
+
+  "StationsListTitle": "Список",
+
+  "StationsMapTitle": "Карта",
+
+  "FindStationsTitle": "Пункты сдачи",
+  "FindCityAlertText": "Выберите город",
+  "FindCityAlertButtonText": "Продолжить",
+
+  "SettingsTitle": "Настройки",
+  "SettingsFindCItyTitle": "Выбрать город",
+  "SettingsAboutTitle": "О донорстве",
+  "SettingsContactsTitle": "Контакты",
+
+  "FindCityTitle": "Выбрать город",
+
+  "NothingFindText": "не найдено",
+
+  "GetDataError": "Не удалось получить данные",
+
+  "StationTitle": "Станция"
+}

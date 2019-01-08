@@ -93,7 +93,7 @@ class Station extends React.Component {
         {this.props.data.site.length > 0 && (
           <Group title="Сайт">
             <List>
-              <Cell before={<Icon24Globe />}>
+              <Cell multiline before={<Icon24Globe />}>
                 <Link href={this.props.data.site}>{this.props.data.site}</Link>
               </Cell>
             </List>
@@ -109,7 +109,7 @@ class Station extends React.Component {
         {this.props.data.email.length > 0 && (
           <Group title="E-mail">
             <List>
-              <Cell before={<Icon24Globe />}>
+              <Cell multiline before={<Icon24Globe />}>
                 <Link href={this.props.data.site}>{this.props.data.site}</Link>
               </Cell>
             </List>

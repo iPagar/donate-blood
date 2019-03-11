@@ -1,12 +1,16 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   Spinner,
   Panel,
-  Group,
   List,
   PanelHeader,
-  HeaderButton
+  HeaderButton,
+  View,
+  Search,
+  Div,
+  platform,
+  IOS,
+  Cell
 } from "@vkontakte/vkui";
 import StationsListCell from "../components/StationsListCell";
 import Loc from "../resources/Loc";
@@ -15,22 +19,38 @@ import DataManager from "../services/DataManager";
 
 import Icon24Settings from "@vkontakte/icons/dist/24/settings";
 
+const osname = platform();
+
 class StationsList extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      stations: [],
+      search: ""
+    };
   }
 
-  showPanelHeader = () => {
+  onSearchChange = search => {
+    this.setState({ search });
+  };
+
+  get stations() {
+    const search = this.state.search.toLowerCase().trim();
+    const filteredStations = this.props.stations.filter(
+      station =>
+        station.title.toLowerCase().indexOf(search) > -1 ||
+        station.address.toLowerCase().indexOf(search) > -1
+    );
+
+    return filteredStations;
+  }
+
+  showPanelHeader() {
     return (
       <PanelHeader
         left={
-          <HeaderButton
-            onClick={this.props.go}
-            data-view="views"
-            data-panel="settings"
-          >
+          <HeaderButton onClick={() => this.props.history.push("findCity")}>
             <Icon24Settings />
           </HeaderButton>
         }
@@ -38,20 +58,22 @@ class StationsList extends React.Component {
         {Loc.FindStationsTitle}
       </PanelHeader>
     );
-  };
+  }
 
   showStations() {
     let listStations = [];
 
-    if (this.props.stations.length > 0) {
-      let stations = this.props.stations.map(station => {
-        const dist = Distance.getDistance(
-          DataManager.getGeo()[0],
-          DataManager.getGeo()[1],
-          station.lat,
-          station.lng
-        );
-        station.dist = dist;
+    if (this.stations.length > 0) {
+      let stations = this.stations.map(station => {
+        if (DataManager.getGeo()) {
+          const dist = Distance.getDistance(
+            DataManager.getGeo()[0],
+            DataManager.getGeo()[1],
+            station.lat,
+            station.lng
+          );
+          station.dist = dist;
+        }
 
         return station;
       });
@@ -76,13 +98,32 @@ class StationsList extends React.Component {
 
     return (
       <React.Fragment>
-        {listStations.length > 0 && (
-          <Group>
-            <List>{listStations}</List>
-          </Group>
+        <Search
+          value={this.state.search}
+          onChange={this.onSearchChange}
+          maxLength="150"
+        />
+        {listStations.length > 0 && <List>{listStations}</List>}
+        {listStations.length === 0 && (
+          <Cell>
+            <Div align="center">
+              {osname === IOS
+                ? Loc.NothingFindText
+                : Loc.NothingFindTextAndroid}
+            </Div>
+          </Cell>
         )}
       </React.Fragment>
     );
+  }
+
+  componentDidMount() {
+    if (DataManager.getSearch())
+      this.setState({ search: DataManager.getSearch() });
+  }
+
+  componentWillUnmount() {
+    DataManager.setSearch(this.state.search);
   }
 
   showSpinner() {
@@ -101,16 +142,14 @@ class StationsList extends React.Component {
 
   render() {
     return (
-      <Panel id={this.props.id}>
-        {this.showPanelHeader()}
-        {this.showStations()}
-      </Panel>
+      <View popout={this.props.popout} activePanel="stationsList">
+        <Panel id="stationsList">
+          {this.showPanelHeader()}
+          {this.props.stations.length > 0 && this.showStations()}
+        </Panel>
+      </View>
     );
   }
 }
-
-StationsList.propTypes = {
-  id: PropTypes.string.isRequired
-};
 
 export default StationsList;

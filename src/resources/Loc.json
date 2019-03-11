@@ -14,7 +14,7 @@
   "FindCityAlertText": "Выберите город",
   "FindCityAlertButtonText": "Продолжить",
 
-  "SettingsTitle": "Настройки",
+  "SettingsTitle": "Ещё",
   "SettingsFindCItyTitle": "Выбрать город",
   "SettingsAboutTitle": "О донорстве",
   "SettingsContactsTitle": "Контакты",
@@ -22,10 +22,11 @@
   "FindCityTitle": "Выбрать город",
 
   "NothingFindText": "не найдено",
-
+  "NothingFindTextAndroid": "Ничего не найдено",
   "GetDataError": "Не удалось получить данные",
+  "GetGeoError": "Не удалось получить геолокацию",
 
   "StationTitle": "Станция",
-  "EmptySheetTitle": "Не найдено станций",
-  "EmptySheetActionTitle": "Выбрать другой город"
+  "EmptySheetTitle": "В Вашем городе найдено станций",
+  "EmptySheetActionTitle": "Выбрать город"
 }

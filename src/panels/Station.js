@@ -1,6 +1,5 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { YMaps, Map, Placemark } from "react-yandex-maps";
+import { Map, Placemark } from "react-yandex-maps";
 import {
   Panel,
   HeaderButton,
@@ -10,8 +9,11 @@ import {
   Cell,
   List,
   Link,
-  Spinner
+  Spinner,
+  platform,
+  IOS
 } from "@vkontakte/vkui";
+import Icon24Back from "@vkontakte/icons/dist/24/back";
 import Loc from "../resources/Loc";
 import DataManager from "../services/DataManager";
 
@@ -22,6 +24,8 @@ import Icon24Globe from "@vkontakte/icons/dist/24/globe";
 import Icon24Phone from "@vkontakte/icons/dist/24/phone";
 import Icon24Recent from "@vkontakte/icons/dist/24/recent";
 
+const osname = platform();
+
 class Station extends React.Component {
   constructor(props) {
     super(props);
@@ -29,72 +33,78 @@ class Station extends React.Component {
     this.state = {
       styleMap: {
         display: "flex",
-        flexGrow: "1",
-        width: "100%"
+        justifyContent: "center",
+        alignContent: "space-between",
+        alignItems: "center",
+        flexDirection: "column",
+        width: "100%",
+        height: "300px"
       },
-      isLoading: true
+      isLoadingMap: true,
+      station: DataManager.getStation()
     };
   }
 
-  showPanelHeader = () => {
+  showPanelHeader() {
+    const { history } = this.props;
+
     return (
       <PanelHeader
         left={
-          <HeaderButton onClick={this.props.go} data-panel="findStations">
-            Отменить
+          <HeaderButton onClick={history.goBack}>
+            {osname === IOS ? "Отмена" : <Icon24Back />}
           </HeaderButton>
         }
       >
         {Loc.StationTitle}
       </PanelHeader>
     );
-  };
+  }
 
   mapOnLoad = () => {
-    this.setState({ isLoading: false });
+    this.setState({ isLoadingMap: false });
   };
 
   showMap() {
     const zoom = 16;
-    console.log([this.props.data.lat, this.props.data.lng]);
+
     const mapState = {
-      center: [this.props.data.lat, this.props.data.lng],
+      center: [this.state.station.lat, this.state.station.lng],
       zoom: zoom
     };
 
     const mapOptions = {
+      yandexMapDisablePoiInteractivity: true,
       suppressMapOpenBlock: true
     };
 
     return (
-      <div style={this.state.styleMap}>
-        <YMaps>
-          <Map
-            defaultOptions={mapOptions}
-            width="inherit"
-            height="300px"
-            defaultState={mapState}
-            onLoad={this.mapOnLoad}
-          >
-            <Placemark
-              geometry={[this.props.data.lat, this.props.data.lng]}
-              options={{
-                iconLayout: "default#image",
-                iconImageHref:
-                  "https://raw.githubusercontent.com/iPagar/donate-blood/master/src/img/heart.png",
-                iconImageSize: [36, 36],
-                iconImageOffset: [-36, -18]
-              }}
-            />
-            <Placemark
-              geometry={DataManager.getGeo()}
-              options={{
-                preset: "islands#circleIcon",
-                iconColor: "#f60808"
-              }}
-            />
-          </Map>
-        </YMaps>
+      <div>
+        {this.state.isLoadingMap && this.showSpinner()}
+        <Map
+          defaultOptions={mapOptions}
+          style={this.state.styleMap}
+          defaultState={mapState}
+          onLoad={this.mapOnLoad}
+        >
+          <Placemark
+            geometry={[this.state.station.lat, this.state.station.lng]}
+            options={{
+              iconLayout: "default#image",
+              iconImageHref:
+                "https://raw.githubusercontent.com/iPagar/donate-blood/master/src/img/heart.png",
+              iconImageSize: [36, 36],
+              iconImageOffset: [-36, -18]
+            }}
+          />
+          <Placemark
+            geometry={DataManager.getGeo()}
+            options={{
+              preset: "islands#geolocationIcon",
+              iconColor: "#f60808"
+            }}
+          />
+        </Map>
       </div>
     );
   }
@@ -102,11 +112,13 @@ class Station extends React.Component {
   showSite() {
     return (
       <React.Fragment>
-        {this.props.data.site.length > 0 && (
+        {this.state.station.site.length > 0 && (
           <Group title="Сайт">
             <List>
               <Cell multiline before={<Icon24Globe />}>
-                <Link href={this.props.data.site}>{this.props.data.site}</Link>
+                <Link href={this.state.station.site}>
+                  {this.state.station.site}
+                </Link>
               </Cell>
             </List>
           </Group>
@@ -118,11 +130,13 @@ class Station extends React.Component {
   showEmail() {
     return (
       <React.Fragment>
-        {this.props.data.email.length > 0 && (
+        {this.state.station.email.length > 0 && (
           <Group title="E-mail">
             <List>
               <Cell multiline before={<Icon24Globe />}>
-                <Link href={this.props.data.site}>{this.props.data.site}</Link>
+                <Link href={this.state.station.site}>
+                  {this.state.station.site}
+                </Link>
               </Cell>
             </List>
           </Group>
@@ -134,11 +148,11 @@ class Station extends React.Component {
   showWorkTime() {
     return (
       <React.Fragment>
-        {this.props.data.worktime.length > 0 && (
+        {this.state.station.worktime.length > 0 && (
           <Group title="Время работы">
             <List>
               <Cell multiline before={<Icon24Recent />}>
-                {this.props.data.worktime}
+                {this.state.station.worktime}
               </Cell>
             </List>
           </Group>
@@ -148,22 +162,22 @@ class Station extends React.Component {
   }
 
   showTel() {
+    let tels = [];
+    if (this.state.station.phones.length > 0)
+      findNumbers(this.state.station.phones, "RU", {
+        v2: true
+      }).map(tel => tels.push(tel.number.formatNational()));
+
     return (
       <React.Fragment>
-        {this.props.data.phones.length > 0 && (
+        {tels.length > 0 && (
           <Group title="Контакты">
             <List>
-              <Cell multiline before={<Icon24Phone />}>
-                <Link
-                  href={`tel:${
-                    findNumbers(this.props.data.phones, "RU", {
-                      v2: true
-                    })[0].number.number
-                  }`}
-                >
-                  {this.props.data.phones}
-                </Link>
-              </Cell>
+              {tels.map((tel, i) => (
+                <Cell key={i} before={<Icon24Phone />}>
+                  <Link href={`tel:${tel}`}>{tel}</Link>
+                </Cell>
+              ))}
             </List>
           </Group>
         )}
@@ -173,15 +187,15 @@ class Station extends React.Component {
 
   showAddress() {
     return (
-      <Group title={this.props.data.title}>
+      <Group title={this.state.station.title}>
         <List>
           <Cell multiline before={<Icon24Place />}>
             <Link
               href={`http://maps.yandex.ru/?text=${
-                this.props.data.city.title
-              }, ${this.props.data.address}`}
+                this.state.station.city.title
+              }, ${this.state.station.address}`}
             >
-              {this.props.data.address}
+              {this.state.station.address}
             </Link>
           </Cell>
         </List>
@@ -202,43 +216,23 @@ class Station extends React.Component {
 
   showSpinner() {
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column"
-        }}
-      >
-        <Spinner size="medium" style={{ marginTop: 20 }} />
+      <div style={this.state.styleMap}>
+        <Spinner size="medium" />
       </div>
     );
   }
 
-  showPanel() {
+  render() {
     return (
-      <View activePanel={this.props.id}>
-        <Panel id={this.props.id}>
+      <View activePanel="station">
+        <Panel id="station">
           {this.showPanelHeader()}
           {this.showMap()}
-          {!this.state.isLoading && this.showInfo()}
-          {this.state.isLoading && this.showSpinner()}
+          {this.showInfo()}
         </Panel>
       </View>
     );
   }
-
-  render() {
-    return this.showPanel();
-  }
 }
-
-Station.propTypes = {
-  id: PropTypes.string.isRequired,
-  go: PropTypes.func.isRequired,
-  data: PropTypes.shape({
-    address: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
-  })
-};
 
 export default Station;

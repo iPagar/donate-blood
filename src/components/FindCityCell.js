@@ -1,11 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import DataManager from "../services/DataManager";
 import { Cell } from "@vkontakte/vkui";
 
 class FindCityCell extends React.Component {
   onClick = () => {
-    DataManager.setCity(this.props.data);
+    this.props.onClick(this.props.data);
   };
 
   render() {

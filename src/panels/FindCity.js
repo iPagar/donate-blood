@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Database from "../services/Database";
 import FindCityCell from "../components/FindCityCell";
+import DataManager from "../services/DataManager";
 import Loc from "../resources/Loc";
 import {
   Panel,
@@ -12,13 +13,14 @@ import {
   Search,
   List,
   Spinner,
-  Div
+  Div,
+  View,
+  Cell,
+  Alert,
+  ScreenSpinner
 } from "@vkontakte/vkui";
-import Icon28ChevronBack from "@vkontakte/icons/dist/28/chevron_back";
-import Icon24BrowserBack from "@vkontakte/icons/dist/24/browser_back";
 
-const WAIT_INTERVAL = 500;
-
+import Icon24Back from "@vkontakte/icons/dist/24/back";
 const osname = platform();
 
 class FindCity extends React.Component {
@@ -27,37 +29,33 @@ class FindCity extends React.Component {
     this.state = {
       search: "",
       isLoading: false,
-      cities: []
+      cities: [],
+      popout: null
     };
   }
 
-  onChange = search => {
+  onChange = async search => {
     if (this._isMounted) {
-      clearTimeout(this.timer);
-      this.setState({ search, isLoading: true });
-      this.timer = setTimeout(() => this.updateCities(), WAIT_INTERVAL);
+      await this.setState({ search });
+      await this.updateCities();
     }
   };
 
   async updateCities() {
-    if (this._isMounted) this.setState({ isLoading: true });
+    await this.setState({ isLoading: true });
 
     const cities = await Database.getCities(this.state.search);
 
-    if (this._isMounted) this.setState({ cities, isLoading: false });
-
-    return cities;
+    await this.setState({ cities, isLoading: false });
   }
 
   componentDidMount() {
     this._isMounted = true;
     this.updateCities();
-    this.timer = null;
   }
 
   componentWillUnmount() {
     this._isMounted = false;
-    if (this.props.necessarily) this.props.set();
   }
 
   showSpinner() {
@@ -74,41 +72,78 @@ class FindCity extends React.Component {
     );
   }
 
+  onCellClick = async data => {
+    this.setState({ popout: <ScreenSpinner /> });
+    const stations = await Database.getStations(data);
+
+    if (stations.length > 0) {
+      if (this._isMounted) {
+        DataManager.setCity(data);
+        DataManager.setStations(stations);
+      }
+      if (this.props.necessarily) this.props.history.push("findStations");
+      else this.props.history.goBack();
+    } else this.openEmptySheet(Loc.EmptySheetTitle);
+
+    this.setState({ popout: null });
+  };
+
+  openEmptySheet(text) {
+    if (this._isMounted)
+      this.setState({
+        popout: (
+          <Alert
+            actions={[
+              {
+                title: Loc.EmptySheetActionTitle,
+                autoclose: true,
+                style: "default"
+              }
+            ]}
+          >
+            <h2>{text}</h2>
+          </Alert>
+        )
+      });
+  }
+
   showCities() {
     const listCities = this.state.cities.map(city => {
-      return <FindCityCell key={city.id} data={city} />;
+      return (
+        <FindCityCell key={city.id} data={city} onClick={this.onCellClick} />
+      );
     });
 
     return (
-      <div>
-        {listCities.length > 0 && (
-          <List
-            onClick={this.props.go}
-            data-view="epics"
-            data-panel="findStations"
-          >
-            {listCities}
-          </List>
-        )}
+      <React.Fragment>
+        {listCities.length > 0 && <List>{listCities}</List>}
         {listCities.length === 0 && (
-          <Div align="center">{Loc.NothingFindText}</Div>
+          <Cell>
+            <Div align="center">
+              {osname === IOS
+                ? Loc.NothingFindText
+                : Loc.NothingFindTextAndroid}
+            </Div>
+          </Cell>
         )}
-      </div>
+      </React.Fragment>
     );
   }
 
   showSearch() {
-    return <Search value={this.state.search} onChange={this.onChange} />;
+    return (
+      <Search
+        value={this.state.search}
+        onChange={this.onChange}
+        maxLength="30"
+      />
+    );
   }
 
   showPanelHeader() {
     let headerButton = (
-      <HeaderButton
-        onClick={this.props.go}
-        data-view="epics"
-        data-panel="findStations"
-      >
-        {osname === IOS ? <Icon28ChevronBack /> : <Icon24BrowserBack />}
+      <HeaderButton onClick={this.props.history.goBack}>
+        {osname === IOS ? "Отмена" : <Icon24Back />}
       </HeaderButton>
     );
 
@@ -123,19 +158,20 @@ class FindCity extends React.Component {
 
   render() {
     return (
-      <Panel id={this.props.id}>
-        {this.showPanelHeader()}
-        {this.showSearch()}
-        {!this.state.isLoading && this.showCities()}
-        {this.state.isLoading && this.showSpinner()}
-      </Panel>
+      <View activePanel="findCityPanel" popout={this.state.popout}>
+        <Panel id="findCityPanel">
+          {this.showPanelHeader()}
+          {this.showSearch()}
+          {!this.state.isLoading && this.showCities()}
+          {this.state.isLoading && this.showSpinner()}
+        </Panel>
+      </View>
     );
   }
 }
 
 FindCity.propTypes = {
-  id: PropTypes.string.isRequired,
-  go: PropTypes.func.isRequired
+  history: PropTypes.object.isRequired
 };
 
 export default FindCity;

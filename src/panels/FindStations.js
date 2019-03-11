@@ -1,14 +1,10 @@
 import React from "react";
-import PropTypes from "prop-types";
-import VKConnect from "@vkontakte/vkui-connect";
+import VKConnect, { response as res } from "@vkontakte/vkui-connect";
 import DataManager from "../services/DataManager";
 import Database from "../services/Database";
 import Geocode from "../services/Geocode";
 import Loc from "../resources/Loc";
-
 import {
-  Root,
-  View,
   Epic,
   Tabbar,
   TabbarItem,
@@ -17,11 +13,20 @@ import {
 } from "@vkontakte/vkui";
 import Icon28Place from "@vkontakte/icons/dist/28/place";
 import Icon28Search from "@vkontakte/icons/dist/28/search";
+import Icon28HelpOutline from "@vkontakte/icons/dist/28/help_outline";
 
 import StationsList from "./StationsList";
 import StationsMap from "./StationsMap";
-import FindCity from "./FindCity";
-import Station from "./Station";
+import AboutDonation from "./AboutDonation";
+
+// res.VKWebAppGetUserInfo.data = {
+//   type: "VKWebAppGeodataResult",
+//   data: {
+//     available: 1,
+//     lat: "59.44",
+//     long: "30.05"
+//   }
+// };
 
 class FindStations extends React.Component {
   constructor(props) {
@@ -36,7 +41,6 @@ class FindStations extends React.Component {
         flexDirection: "column",
         alignItems: "center"
       },
-      city: null,
       stations: [],
       popout: null
     };
@@ -44,6 +48,7 @@ class FindStations extends React.Component {
 
   onStoryChange = e => {
     this.setState({ activeStory: e.currentTarget.dataset.story });
+    this.props.history.replace("?" + e.currentTarget.dataset.story);
   };
 
   showTabbar = () => {
@@ -67,108 +72,83 @@ class FindStations extends React.Component {
             <Icon28Place />
           </div>
         </TabbarItem>
+        <TabbarItem
+          onClick={this.onStoryChange}
+          selected={this.state.activeStory === "aboutDonation"}
+          data-story="aboutDonation"
+        >
+          <div style={this.state.styleTabButton}>
+            <Icon28HelpOutline />
+          </div>
+        </TabbarItem>
       </Tabbar>
     );
   };
 
-  go = e => {
-    this.setState({ activeView: e.currentTarget.dataset.panel });
-  };
-
-  city = city => {
-    this.setState({ city });
-    this.setState({ activeView: "station" });
-  };
-
-  showEpic = () => {
-    return (
-      <Root activeView={this.state.activeView}>
-        <Epic
-          id="findStations"
-          activeStory={this.state.activeStory}
-          tabbar={this.showTabbar()}
-        >
-          <View
-            popout={this.state.popout}
-            id="stationsList"
-            activePanel="stationsList"
-          >
-            <StationsList
-              id="stationsList"
-              go={this.props.go}
-              stations={this.state.stations}
-              city={this.city}
-            />
-          </View>
-          <View
-            popout={this.state.popout}
-            id="stationsMap"
-            activePanel="stationsMap"
-          >
-            <StationsMap
-              id="stationsMap"
-              stations={this.state.stations}
-              city={this.city}
-            />
-          </View>
-        </Epic>
-        <View id="findCityView" activePanel="findCity">
-          <FindCity
-            id="findCity"
-            go={this.go}
-            necessarily={true}
-            set={this.setStations}
-          />
-        </View>
-        <Station
-          id="station"
-          go={this.go}
-          city={this.city}
-          data={this.state.city}
-        />
-      </Root>
-    );
-  };
-
   async setCity() {
-    const city = await Geocode.geoToCity(DataManager.getGeo());
-    const cities = await Database.getCities(city);
+    this.setState({ isLoading: true, popout: <ScreenSpinner /> });
 
-    if (Object.keys(cities).length > 0) DataManager.setCity(cities[0]);
-    else this.setState({ activeView: "findCityView" });
+    const city = await Geocode.geoToCity(DataManager.getGeo());
+    DataManager.setUserCity(city);
+    const cities = await Database.getCities(DataManager.getUserCity());
+    const stations = await Database.getStations(cities[0]);
+
+    if (cities.length > 0 && stations.length > 0) {
+      DataManager.setCity(cities[0]);
+      DataManager.setStations(stations);
+      this.setState({ stations });
+    } else {
+      const center = await Geocode.getProvincyCenter(DataManager.getGeo());
+      const cities = await Database.getCities(center);
+      const stations = await Database.getStations(cities[0]);
+
+      if (cities.length > 0 && stations.length > 0) {
+        DataManager.setCity(cities[0]);
+        DataManager.setStations(stations);
+        this.setState({ stations });
+      } else {
+        this.openEmptySheet(Loc.EmptySheetTitle);
+      }
+    }
+
+    this.setState({ isLoading: false, popout: null });
   }
 
-  setStations = async () => {
-    if (this._isMounted)
-      this.setState({ isLoading: true, popout: <ScreenSpinner /> });
+  setStations = () => {
+    this.setState({
+      stations: DataManager.getStations()
+    });
+  };
 
-    if (DataManager.getCity() == null) await this.setCity();
+  geoSubscribe = e => {
+    switch (e.detail.type) {
+      case "VKWebAppGeodataResult":
+        if (e.detail.data.available) {
+          DataManager.setGeo(e.detail.data.lat, e.detail.data.long);
 
-    await this.updateStations();
-
-    if (Object.keys(this.state.stations).length === 0) {
-      this.openEmptySheet();
-    } else if (this._isMounted)
-      this.setState({ isLoading: false, popout: null });
+          this.setCity();
+        } else this.openEmptySheet(Loc.GetGeoError);
+        break;
+      case "VKWebAppGeodataFailed":
+        this.openEmptySheet(Loc.GetGeoError);
+        break;
+      default:
+        break;
+    }
   };
 
   getCity() {
-    VKConnect.subscribe(e => {
-      switch (e.detail.type) {
-        case "VKWebAppGeodataResult":
-          DataManager.setGeo(e.detail.data.lat, e.detail.data.long);
-
-          this.setStations();
-          break;
-        default:
-          VKConnect.send("VKWebAppGetGeodata", {});
-          break;
-      }
-    });
-    VKConnect.send("VKWebAppGetGeodata", {});
+    if (DataManager.getCity() === null) {
+      VKConnect.subscribe(this.geoSubscribe);
+      VKConnect.send("VKWebAppGetGeodata", {});
+    } else {
+      this.setStations();
+    }
   }
 
-  openEmptySheet() {
+  openEmptySheet(text) {
+    const { history } = this.props;
+
     if (this._isMounted)
       this.setState({
         popout: (
@@ -177,42 +157,60 @@ class FindStations extends React.Component {
               {
                 title: Loc.EmptySheetActionTitle,
                 autoclose: true,
-                style: "primary"
+                style: "default"
               }
             ]}
-            onClose={() =>
-              this.setState({ popout: null, activeView: "findCityView" })
-            }
+            onClose={() => {
+              this.setState({ popout: null });
+              history.replace("findCityNecessarily");
+            }}
           >
-            <h2>{Loc.EmptySheetTitle}</h2>
+            <h2>{text}</h2>
           </Alert>
         )
       });
   }
 
-  async updateStations() {
-    const stations = await Database.getStations(DataManager.getCity());
-
-    if (this._isMounted) this.setState({ stations });
-  }
+  city = city => {
+    DataManager.setStation(city);
+    this.props.history.push("station");
+  };
 
   componentWillUnmount() {
+    VKConnect.unsubscribe(this.geoSubscribe);
     this._isMounted = false;
   }
 
   componentDidMount() {
     this._isMounted = true;
+    if (this.props.location.search)
+      this.setState({ activeStory: this.props.location.search.slice(1) });
+
     this.getCity();
   }
 
   render() {
-    return this.showEpic();
+    return (
+      <Epic activeStory={this.state.activeStory} tabbar={this.showTabbar()}>
+        <StationsList
+          popout={this.state.popout}
+          id="stationsList"
+          history={this.props.history}
+          stations={this.state.stations}
+          city={this.city}
+        />
+        <StationsMap
+          popout={this.state.popout}
+          id="stationsMap"
+          stations={this.state.stations}
+          city={this.city}
+        />
+        <AboutDonation popout={this.state.popout} id="aboutDonation" />
+      </Epic>
+    );
   }
 }
 
-FindStations.propTypes = {
-  id: PropTypes.string.isRequired,
-  go: PropTypes.func.isRequired
-};
+FindStations.propTypes = {};
 
 export default FindStations;

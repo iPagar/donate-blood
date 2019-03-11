@@ -26,7 +26,7 @@ class StationsListCell extends React.Component {
           <div style={{ lineHeight: "24px" }}>{dist}</div>
         )}
         <Icon24Chevron
-          class="Cell__chevron"
+          className="Cell__chevron"
           style={{ display: "inline-block" }}
         />
       </div>

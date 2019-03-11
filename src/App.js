@@ -1,25 +1,17 @@
 import React from "react";
 import VKConnect from "@vkontakte/vkui-connect";
-import { View, Root } from "@vkontakte/vkui";
+import { Root, View } from "@vkontakte/vkui";
 import DataManager from "./services/DataManager";
 import "@vkontakte/vkui/dist/vkui.css";
+import "./resources/ui.css";
+import { Route, withRouter } from "react-router-dom";
 
-import Welcome from "./panels/Welcome";
 import FindStations from "./panels/FindStations";
-import Settings from "./panels/Settings";
 import FindCity from "./panels/FindCity";
-import About from "./panels/About";
-import AboutDonation from "./panels/AboutDonation";
+import Station from "./panels/Station";
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      activePanel: "welcome",
-      activeView: "views"
-    };
-  }
+  state = { isLoading: false };
 
   getTheme() {
     VKConnect.subscribe(e => {
@@ -32,72 +24,56 @@ class App extends React.Component {
           document.body.attributes.setNamedItem(schemeAttribute);
           break;
         default:
-          //console.log(e.detail.type);
           break;
       }
     });
-  }
-
-  checkCity() {
-    const city = DataManager.getCity();
-
-    if (city != null) {
-      this.setState({ activeView: "epics", activePanel: "findStations" });
-    }
   }
 
   componentWillUnmount() {
     DataManager.clear();
   }
 
-  go = e => {
-    this.setState({ activeView: e.currentTarget.dataset.view });
-    if (e.currentTarget.dataset.panel)
-      this.setState({ activePanel: e.currentTarget.dataset.panel });
-  };
+  async setInitialView() {
+    await this.setState({ isLoading: true });
 
-  showViews = () => {
-    return (
-      <View id="views" activePanel={this.state.activePanel}>
-        <Welcome id="welcome" go={this.go} />
-        <Settings id="settings" go={this.go} />
-        <FindCity id="findCity" go={this.go} />
-        <About id="about" go={this.go} />
-        <AboutDonation id="aboutDonation" go={this.go} />
-        <AboutDonation
-          id="aboutDonationFromWelcome"
-          go={this.go}
-          welcome={true}
-        />
-      </View>
-    );
-  };
+    this.props.history.replace("findStations");
 
-  showEpic = () => {
-    return (
-      <div id="epics" style={{ height: "100%", width: "100%" }}>
-        <FindStations id="findStations" go={this.go} />
-      </div>
-    );
-  };
-
-  showRoot = () => {
-    return (
-      <Root activeView={this.state.activeView}>
-        {this.showEpic()}
-        {this.showViews()}
-      </Root>
-    );
-  };
+    await this.setState({ isLoading: false });
+  }
 
   componentDidMount() {
+    this.setInitialView();
     this.getTheme();
-    this.checkCity();
   }
 
   render() {
-    return this.showRoot();
+    const { isLoading } = this.state;
+    const activeView = this.props.location.pathname.slice(1);
+
+    return (
+      <div style={{ width: "100%", height: "100%" }}>
+        {!isLoading && (
+          <Root activeView={activeView}>
+            <Route id="findStations" component={FindStations} />
+            <Route id="station" component={Station} />
+            <Route id="findCity" component={FindCity} />
+            <Route
+              id="findCityNecessarily"
+              render={() => (
+                <View activePanel="findCityPanel">
+                  <FindCity
+                    id="findCityPanel"
+                    history={this.props.history}
+                    necessarily
+                  />
+                </View>
+              )}
+            />
+          </Root>
+        )}
+      </div>
+    );
   }
 }
 
-export default App;
+export default withRouter(App);

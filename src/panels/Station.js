@@ -198,15 +198,9 @@ class Station extends React.Component {
         <List>
           <Cell multiline before={<Icon24Place />}>
             <Link
-              href={
-                osname === IOS
-                  ? `yandexmaps://maps.yandex.ru/?text=${
-                      this.state.station.city.title
-                    }, ${this.state.station.address}`
-                  : `//maps.yandex.ru/?text=${this.state.station.city.title}, ${
-                      this.state.station.address
-                    }`
-              }
+              href={`//maps.yandex.ru/?text=${this.state.station.city.title}, ${
+                this.state.station.address
+              }`}
             >
               {this.state.station.address}
             </Link>
@@ -237,7 +231,7 @@ class Station extends React.Component {
 
   render() {
     return (
-      <View activePanel="station">
+      <View activePanel="station" popout={this.state.popout}>
         <Panel id="station">
           {this.showPanelHeader()}
           {this.showMap()}

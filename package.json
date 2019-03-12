@@ -1,6 +1,6 @@
 {
 	"name": "donate-blood",
-	"version": "1.4.1",
+	"version": "1.4.2",
 	"description": "Здесь Вы можете найти пункты сдачи крови в Вашем городе и получить всю необходимую информацию о донорстве крови.",
 	"main": "index.js",
 	"homepage": "https://ipagar.github.io/donate-blood/",

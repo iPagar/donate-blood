@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/donate-blood/precache-manifest.ab0fcab26f16a9497ed05d98174301a5.js"
+  "/donate-blood/precache-manifest.f70d99255b7043d118b7cd12457cd349.js"
 );
 
 workbox.clientsClaim();

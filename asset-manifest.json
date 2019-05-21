@@ -1,15 +1,15 @@
 {
-  "main.css": "/donate-blood/static/css/main.fdfcd892.chunk.css",
-  "main.js": "/donate-blood/static/js/main.b9b6aa05.chunk.js",
-  "main.js.map": "/donate-blood/static/js/main.b9b6aa05.chunk.js.map",
+  "main.css": "/donate-blood/static/css/main.6b1b6d28.chunk.css",
+  "main.js": "/donate-blood/static/js/main.78ef61dd.chunk.js",
+  "main.js.map": "/donate-blood/static/js/main.78ef61dd.chunk.js.map",
   "runtime~main.js": "/donate-blood/static/js/runtime~main.a18b42a9.js",
   "runtime~main.js.map": "/donate-blood/static/js/runtime~main.a18b42a9.js.map",
   "static/css/2.b7fedd49.chunk.css": "/donate-blood/static/css/2.b7fedd49.chunk.css",
-  "static/js/2.9e389041.chunk.js": "/donate-blood/static/js/2.9e389041.chunk.js",
-  "static/js/2.9e389041.chunk.js.map": "/donate-blood/static/js/2.9e389041.chunk.js.map",
+  "static/js/2.f1b56fd9.chunk.js": "/donate-blood/static/js/2.f1b56fd9.chunk.js",
+  "static/js/2.f1b56fd9.chunk.js.map": "/donate-blood/static/js/2.f1b56fd9.chunk.js.map",
   "index.html": "/donate-blood/index.html",
-  "precache-manifest.f70d99255b7043d118b7cd12457cd349.js": "/donate-blood/precache-manifest.f70d99255b7043d118b7cd12457cd349.js",
+  "precache-manifest.9f11a80cdd934653f1ae4a824ea4f1de.js": "/donate-blood/precache-manifest.9f11a80cdd934653f1ae4a824ea4f1de.js",
   "service-worker.js": "/donate-blood/service-worker.js",
   "static/css/2.b7fedd49.chunk.css.map": "/donate-blood/static/css/2.b7fedd49.chunk.css.map",
-  "static/css/main.fdfcd892.chunk.css.map": "/donate-blood/static/css/main.fdfcd892.chunk.css.map"
+  "static/css/main.6b1b6d28.chunk.css.map": "/donate-blood/static/css/main.6b1b6d28.chunk.css.map"
 }

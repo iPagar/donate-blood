@@ -4,13 +4,17 @@ import { Root, View } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
 import "./resources/ui.css";
 import { Route, withRouter } from "react-router-dom";
+import "./app.css";
 
 import FindStations from "./panels/FindStations";
 import FindCity from "./panels/FindCity";
 import Station from "./panels/Station";
 
 class App extends React.Component {
-  state = { isLoading: false };
+  constructor(props) {
+    super(props);
+    this.state = { isLoading: false };
+  }
 
   getTheme() {
     VKConnect.subscribe(e => {

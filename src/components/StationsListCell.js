@@ -4,7 +4,7 @@ import { Cell } from "@vkontakte/vkui";
 
 import Icon24Chevron from "@vkontakte/icons/dist/24/chevron";
 
-const maxDist = 200;
+const maxDist = 100;
 
 class StationsListCell extends React.Component {
   showLength() {

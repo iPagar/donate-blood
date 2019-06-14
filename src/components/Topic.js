@@ -20,6 +20,8 @@ class Topic extends React.Component {
   };
 
   handleTitleClick = e => {
+    // e.currentTarget.children[0].className = `Tappable Tappable--ios Cell__in Tappable--inactive`;
+    // console.log(e.currentTarget.children[0].className);
     let icon = (
       <Icon16Dropdown
         style={{
@@ -60,18 +62,20 @@ class Topic extends React.Component {
   render() {
     const { title } = this.props.data;
     return (
-      <Cell multiline onClick={this.handleTitleClick} size="l">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <b>{title}</b> {this.state.icon}
-        </div>
-        {this.state.visibleText && <Div>{this.showText()}</Div>}
-      </Cell>
+      <div>
+        <Cell multiline size="l" onClick={this.handleTitleClick}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}
+          >
+            <b>{title}</b> {this.state.icon}
+          </div>
+        </Cell>
+        {this.state.visibleText && this.showText()}
+      </div>
     );
   }
 }

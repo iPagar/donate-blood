@@ -1,0 +1,21 @@
+.show {
+	animation: 1s ease-in-out 1 forwards move;
+	bottom: calc(var(--tabbar_height) + 5px);
+}
+
+.hide {
+	animation: 0.5s ease-in-out 1 reverse forwards move;
+}
+
+@keyframes move {
+	from {
+		bottom: 0;
+	}
+	,
+	50% {
+		bottom: calc(var(--tabbar_height) / 2);
+	}
+	to {
+		bottom: calc(var(--tabbar_height) + 5px);
+	}
+}

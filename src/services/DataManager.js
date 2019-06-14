@@ -19,8 +19,9 @@ class DataManager {
     return search;
   }
 
-  static setCity(city) {
+  static async setCity(city) {
     sessionStorage.setItem("city", JSON.stringify(city));
+
     this.setSearch("");
     this.setMapState(null);
   }

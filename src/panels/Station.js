@@ -11,6 +11,7 @@ import {
   Link,
   Spinner,
   platform,
+  Header,
   IOS
 } from "@vkontakte/vkui";
 import Icon24Back from "@vkontakte/icons/dist/24/back";
@@ -194,7 +195,10 @@ class Station extends React.Component {
 
   showAddress() {
     return (
-      <Group title={this.state.station.title}>
+      <Group>
+        <Header level="2">
+          <div style={{ whiteSpace: "normal" }}>{this.state.station.title}</div>
+        </Header>
         <List>
           <Cell multiline before={<Icon24Place />}>
             <Link

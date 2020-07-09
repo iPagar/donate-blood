@@ -1,5 +1,5 @@
 import React from "react";
-import VKConnect from "@vkontakte/vkui-connect";
+import VKConnect from "@vkontakte/vk-bridge";
 import { Root, View } from "@vkontakte/vkui";
 import "@vkontakte/vkui/dist/vkui.css";
 import "./resources/ui.css";
@@ -17,7 +17,7 @@ class App extends React.Component {
   }
 
   getTheme() {
-    VKConnect.subscribe(e => {
+    VKConnect.subscribe((e) => {
       switch (e.detail.type) {
         case "VKWebAppUpdateConfig":
           let schemeAttribute = document.createAttribute("scheme");

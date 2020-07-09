@@ -7,7 +7,7 @@ import Loc from "../resources/Loc";
 import {
   Panel,
   PanelHeader,
-  HeaderButton,
+  PanelHeaderButton,
   platform,
   IOS,
   Search,
@@ -17,7 +17,7 @@ import {
   View,
   Cell,
   Alert,
-  ScreenSpinner
+  ScreenSpinner,
 } from "@vkontakte/vkui";
 
 import Icon24Back from "@vkontakte/icons/dist/24/back";
@@ -30,11 +30,11 @@ class FindCity extends React.Component {
       search: "",
       isLoading: false,
       cities: [],
-      popout: null
+      popout: null,
     };
   }
 
-  onChange = async search => {
+  onChange = async (search) => {
     if (this._isMounted) {
       this.setState({ search });
       await this.updateCities();
@@ -65,7 +65,7 @@ class FindCity extends React.Component {
         style={{
           display: "flex",
           alignItems: "center",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
       >
         <Spinner size="medium" style={{ marginTop: 20 }} />
@@ -73,7 +73,7 @@ class FindCity extends React.Component {
     );
   }
 
-  onCellClick = async data => {
+  onCellClick = async (data) => {
     this.setState({ popout: <ScreenSpinner /> });
     const stations = await Database.getStations(data);
 
@@ -97,8 +97,8 @@ class FindCity extends React.Component {
               {
                 title: Loc.EmptySheetActionTitle,
                 autoclose: true,
-                style: "default"
-              }
+                style: "default",
+              },
             ]}
             onClose={() => {
               this.setState({ popout: null });
@@ -106,12 +106,12 @@ class FindCity extends React.Component {
           >
             <h2>{text}</h2>
           </Alert>
-        )
+        ),
       });
   }
 
   showCities() {
-    const listCities = this.state.cities.map(city => {
+    const listCities = this.state.cities.map((city) => {
       return (
         <FindCityCell key={city.id} data={city} onClick={this.onCellClick} />
       );
@@ -145,9 +145,9 @@ class FindCity extends React.Component {
 
   showPanelHeader() {
     let headerButton = (
-      <HeaderButton onClick={this.props.history.goBack}>
+      <PanelHeaderButton onClick={this.props.history.goBack}>
         {osname === IOS ? "Отмена" : <Icon24Back />}
-      </HeaderButton>
+      </PanelHeaderButton>
     );
 
     if (this.props.necessarily) headerButton = " ";
@@ -174,7 +174,7 @@ class FindCity extends React.Component {
 }
 
 FindCity.propTypes = {
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
 export default FindCity;

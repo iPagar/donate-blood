@@ -1,6 +1,6 @@
 import React from "react";
-import VKConnect from "@vkontakte/vkui-connect";
-import VKConnectPromise from "@vkontakte/vkui-connect-promise";
+import VKConnect from "@vkontakte/vk-bridge";
+import VKConnectPromise from "@vkontakte/vk-bridge";
 import DataManager from "../services/DataManager";
 import Database from "../services/Database";
 import Geocode from "../services/Geocode";
@@ -14,7 +14,7 @@ import {
   ScreenSpinner,
   Alert,
   Button,
-  Link
+  Link,
 } from "@vkontakte/vkui";
 import Icon28Place from "@vkontakte/icons/dist/28/place";
 import Icon28Search from "@vkontakte/icons/dist/28/search";
@@ -50,15 +50,15 @@ class FindStations extends React.Component {
       styleTabButton: {
         display: "flex",
         flexDirection: "column",
-        alignItems: "center"
+        alignItems: "center",
       },
       stations: [],
-      popout: null
+      popout: null,
     };
     this.buttonRef = React.createRef();
   }
 
-  onStoryChange = e => {
+  onStoryChange = (e) => {
     this.setState({ activeStory: e.currentTarget.dataset.story });
     this.props.history.replace("?" + e.currentTarget.dataset.story);
   };
@@ -130,11 +130,11 @@ class FindStations extends React.Component {
 
   setStations = () => {
     this.setState({
-      stations: DataManager.getStations()
+      stations: DataManager.getStations(),
     });
   };
 
-  geoSubscribe = e => {
+  geoSubscribe = (e) => {
     switch (e.detail.type) {
       case "VKWebAppGeodataResult":
         if (e.detail.data.available) {
@@ -171,8 +171,8 @@ class FindStations extends React.Component {
               {
                 title: Loc.EmptySheetActionTitle,
                 autoclose: true,
-                style: "default"
-              }
+                style: "default",
+              },
             ]}
             onClose={() => {
               this.setState({ popout: null });
@@ -181,11 +181,11 @@ class FindStations extends React.Component {
           >
             <h2>{text}</h2>
           </Alert>
-        )
+        ),
       });
   }
 
-  city = city => {
+  city = (city) => {
     DataManager.setStation(city);
     this.props.history.push("station");
   };
@@ -215,9 +215,9 @@ class FindStations extends React.Component {
   }
 
   loadPopupView() {
-    if (!isCancelled) {
-      timeToShow = setTimeout(this.showPopupView, 5000);
-    }
+    // if (!isCancelled) {
+    //   timeToShow = setTimeout(this.showPopupView, 5000);
+    // }
   }
 
   popupError = () => {
@@ -228,14 +228,14 @@ class FindStations extends React.Component {
             {
               title: "Ок",
               autoclose: true,
-              style: "default"
-            }
+              style: "default",
+            },
           ]}
           onClose={() => this.setState({ popout: null })}
         >
           Ошибка
         </Alert>
-      )
+      ),
     });
   };
 
@@ -252,13 +252,13 @@ class FindStations extends React.Component {
             {
               title: "Хорошо",
               action: this.subToPublic,
-              style: "default"
+              style: "default",
             },
             {
               title: "Отмена",
               autoclose: true,
-              style: "cancel"
-            }
+              style: "cancel",
+            },
           ]}
           actionsLayout="vertical"
           onClose={() => {
@@ -268,7 +268,7 @@ class FindStations extends React.Component {
           Будьте в курсе всех событий, связанных с донорством крови -
           подпишитесь на нас!
         </Alert>
-      )
+      ),
     });
   };
 
@@ -290,9 +290,9 @@ class FindStations extends React.Component {
                   this.setState({ popout: <ScreenSpinner /> });
                   VKConnectPromise.send("VKWebAppGetAuthToken", {
                     app_id: 6783775,
-                    scope: "stories"
+                    scope: "stories",
                   })
-                    .then(data => {
+                    .then((data) => {
                       let token = data.data.access_token;
                       VKConnectPromise.send("VKWebAppCallAPIMethod", {
                         method: "stories.getPhotoUploadServer",
@@ -300,10 +300,10 @@ class FindStations extends React.Component {
                           add_to_news: 1,
                           link_url: "https://vk.com/app6783775",
                           v: "5.95",
-                          access_token: token
-                        }
+                          access_token: token,
+                        },
                       })
-                        .then(resp => {
+                        .then((resp) => {
                           const url = resp.data.response.upload_url;
                           fetch(`https://ipagar.asuscomm.com:8084/?url=${url}`)
                             .then(this.popupSuccess)
@@ -331,7 +331,7 @@ class FindStations extends React.Component {
               border="0"
             />
           </PopupView>
-        )
+        ),
       });
   };
 

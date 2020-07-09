@@ -13,7 +13,7 @@ class Database {
         stations = json.data.stations;
 
         stations = stations.filter(
-            station =>
+            (station) =>
                 !(
                     station.title.toLowerCase().indexOf("закрыта") !== -1 ||
                     station.title.toLowerCase().indexOf("закрыто") !== -1

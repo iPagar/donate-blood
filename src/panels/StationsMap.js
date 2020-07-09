@@ -3,10 +3,10 @@ import PropTypes from "prop-types";
 import {
   Panel,
   PanelHeader,
-  HeaderButton,
+  PanelHeaderButton,
   View,
   Alert,
-  Spinner
+  Spinner,
 } from "@vkontakte/vkui";
 import VKConnect from "@vkontakte/vkui-connect";
 import { Map, Placemark, Clusterer } from "react-yandex-maps";
@@ -24,7 +24,7 @@ class StationsMap extends React.Component {
       styleMap: {
         display: "flex",
         flexGrow: "1",
-        width: "100%"
+        width: "100%",
       },
       map: null,
       geo: "",
@@ -33,11 +33,11 @@ class StationsMap extends React.Component {
       isLoadingMap: true,
       userGeo: "",
       isPanning: false,
-      stations: ""
+      stations: "",
     };
   }
 
-  geoSubscribe = async e => {
+  geoSubscribe = async (e) => {
     switch (e.detail.type) {
       case "VKWebAppGeodataResult":
         if (e.detail.data.available) {
@@ -59,15 +59,15 @@ class StationsMap extends React.Component {
                   {
                     title: "Ок",
                     autoclose: true,
-                    style: "primary"
-                  }
+                    style: "primary",
+                  },
                 ]}
                 onClose={() => this.setState({ popout: null })}
               >
                 <h2>Геопозиция отключена</h2>
                 <p>Включите геопозицию в настройках Вашего телефона</p>
               </Alert>
-            )
+            ),
           });
         }
         break;
@@ -79,14 +79,14 @@ class StationsMap extends React.Component {
                 {
                   title: "Ок",
                   autoclose: true,
-                  style: "primary"
-                }
+                  style: "primary",
+                },
               ]}
               onClose={() => this.setState({ popout: null })}
             >
               <p>Не удалось получить геопозицию</p>
             </Alert>
-          )
+          ),
         });
         break;
       default:
@@ -94,7 +94,7 @@ class StationsMap extends React.Component {
     }
   };
 
-  onClickHeaderButton = () => {
+  onClickPanelHeaderButton = () => {
     VKConnect.subscribe(this.geoSubscribe);
     VKConnect.send("VKWebAppGetGeodata", {});
   };
@@ -103,9 +103,9 @@ class StationsMap extends React.Component {
     return (
       <PanelHeader
         left={
-          <HeaderButton onClick={this.onClickHeaderButton}>
+          <PanelHeaderButton onClick={this.onClickPanelHeaderButton}>
             <Icon24Locate />
-          </HeaderButton>
+          </PanelHeaderButton>
         }
       >
         {Loc.FindStationsTitle}
@@ -113,7 +113,7 @@ class StationsMap extends React.Component {
     );
   }
 
-  setMapRef = map => {
+  setMapRef = (map) => {
     if (this._isMounted) this.setState({ map });
   };
 
@@ -130,7 +130,7 @@ class StationsMap extends React.Component {
           iconImageHref:
             "https://raw.githubusercontent.com/iPagar/donate-blood/master/src/img/heart.png",
           iconImageSize: [36, 36],
-          iconImageOffset: [-18, -36]
+          iconImageOffset: [-18, -36],
         }}
       />
     ));
@@ -147,11 +147,11 @@ class StationsMap extends React.Component {
 
     const mapState = {
       center: geo,
-      zoom: zoom
+      zoom: zoom,
     };
     const mapOptions = {
       yandexMapDisablePoiInteractivity: true,
-      suppressMapOpenBlock: true
+      suppressMapOpenBlock: true,
     };
 
     return (
@@ -175,16 +175,16 @@ class StationsMap extends React.Component {
                 margin: 10,
                 hasBalloon: false,
                 hasHint: false,
-                zoomMargin: 36
+                zoomMargin: 36,
               }}
             >
-              {Stations.map(station => station)}
+              {Stations.map((station) => station)}
             </Clusterer>
             <Placemark
               geometry={this.state.userGeo}
               options={{
                 preset: "islands#geolocationIcon",
-                iconColor: "#f60808"
+                iconColor: "#f60808",
               }}
             />
           </Map>
@@ -210,7 +210,7 @@ class StationsMap extends React.Component {
 
       this.setState({
         geo,
-        zoom: 12
+        zoom: 12,
       });
     }
     this.setState({ userGeo: DataManager.getGeo(), isLoading: false });
@@ -220,7 +220,7 @@ class StationsMap extends React.Component {
     if (this.state.map) {
       let mapState = {
         center: this.state.map.getCenter(),
-        zoom: this.state.map.getZoom()
+        zoom: this.state.map.getZoom(),
       };
 
       DataManager.setMapState(mapState);
@@ -236,7 +236,7 @@ class StationsMap extends React.Component {
           top: 0,
           left: 0,
           bottom: 0,
-          right: 0
+          right: 0,
         }}
       >
         <Spinner size="medium" />
@@ -269,7 +269,7 @@ class StationsMap extends React.Component {
 }
 
 StationsMap.propTypes = {
-  stations: PropTypes.array.isRequired
+  stations: PropTypes.array.isRequired,
 };
 
 export default StationsMap;

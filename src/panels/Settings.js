@@ -5,11 +5,11 @@ import DataManager from "../services/DataManager";
 import {
   Panel,
   PanelHeader,
-  HeaderButton,
+  PanelHeaderButton,
   Group,
   Div,
   List,
-  Cell
+  Cell,
 } from "@vkontakte/vkui";
 import Icon24Globe from "@vkontakte/icons/dist/24/globe";
 import Icon24Place from "@vkontakte/icons/dist/24/place";
@@ -21,13 +21,13 @@ class Settings extends React.Component {
     return (
       <PanelHeader
         left={
-          <HeaderButton
+          <PanelHeaderButton
             onClick={this.props.go}
             data-panel="findStations"
             data-view="epics"
           >
             <Icon24Globe />
-          </HeaderButton>
+          </PanelHeaderButton>
         }
       >
         {Loc.SettingsTitle}
@@ -90,7 +90,7 @@ class Settings extends React.Component {
 
 Settings.propTypes = {
   id: PropTypes.string.isRequired,
-  go: PropTypes.func.isRequired
+  go: PropTypes.func.isRequired,
 };
 
 export default Settings;

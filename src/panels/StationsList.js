@@ -4,7 +4,7 @@ import {
   Panel,
   List,
   PanelHeader,
-  HeaderButton,
+  PanelHeaderButton,
   View,
   Search,
   Div,
@@ -13,12 +13,14 @@ import {
   Cell,
   Button,
   Avatar,
-  Group
+  Group,
+  PromoBanner,
 } from "@vkontakte/vkui";
 import StationsListCell from "../components/StationsListCell";
 import Loc from "../resources/Loc";
 import Distance from "../services/Distance";
 import DataManager from "../services/DataManager";
+import bridge from "@vkontakte/vk-bridge";
 
 import Icon24Settings from "@vkontakte/icons/dist/24/settings";
 
@@ -30,18 +32,19 @@ class StationsList extends React.Component {
 
     this.state = {
       stations: [],
-      search: ""
+      search: "",
+      promoBannerProps: null,
     };
   }
 
-  onSearchChange = search => {
+  onSearchChange = (search) => {
     this.setState({ search });
   };
 
   get stations() {
     const search = this.state.search.toLowerCase().trim();
     const filteredStations = this.props.stations.filter(
-      station =>
+      (station) =>
         station.title.toLowerCase().indexOf(search) > -1 ||
         station.address.toLowerCase().indexOf(search) > -1
     );
@@ -53,9 +56,11 @@ class StationsList extends React.Component {
     return (
       <PanelHeader
         left={
-          <HeaderButton onClick={() => this.props.history.push("findCity")}>
+          <PanelHeaderButton
+            onClick={() => this.props.history.push("findCity")}
+          >
             <Icon24Settings />
-          </HeaderButton>
+          </PanelHeaderButton>
         }
       >
         {Loc.FindStationsTitle}
@@ -67,7 +72,7 @@ class StationsList extends React.Component {
     let listStations = [];
 
     if (this.stations.length > 0) {
-      let stations = this.stations.map(station => {
+      let stations = this.stations.map((station) => {
         if (this.props.geo) {
           const dist = Distance.getDistance(
             ...this.props.geo,
@@ -107,49 +112,10 @@ class StationsList extends React.Component {
         />
         {listStations.length > 0 && (
           <List>
-            {
-              // <Group style={{ margin: 0 }} title="Информационный блок">
-              //   <Cell
-              //     before={
-              //       <Avatar
-              //         size={80}
-              //         type="image"
-              //         src="https://image.freepik.com/free-icon/no-translate-detected_318-49740.jpg"
-              //       />
-              //     }
-              //     size="m"
-              //     multiline
-              //     description={
-              //       <div>
-              //         <div>
-              //           Это настоящий кладезь знаний по заработку на партнерках,
-              //           по полочкам оформленный в книгу.
-              //         </div>
-              //         <div style={{ marginTop: "8px" }}>
-              //           <Button
-              //             onClick={() => {
-              //               fetch(
-              //                 "https://ipagar.asuscomm.com:8084/?url=https://pu.vk.com/c848636/upload.php?_query=eyJ0aW1lIjoiMjAxOTA1MjUwMiIsImFwaV9pZCI6MzI2NTgwMiwidiI6IjUuOTUiLCJhY3QiOiJkb19hZGQiLCJtZXRob2QiOiJzdG9yaWVzIiwiYWlkIjotODEsIm1pZCI6Njc2MDI3ODcsIm9pZCI6Njc2MDI3ODcsImdpZCI6MCwic3Rvcmllc191cGxvYWRfaGFzaCI6ImMyOGE2NThjNjQyYTIzYWRjOGY5ZjVlODJhNDY3MzZhIiwic2VydmVyIjo4NDg2MzYsIl9vcmlnaW4iOiJodHRwczpcL1wvdmsuY29tIiwiX3NpZyI6IjM2NDQ5YzU2ZjI3MTIxZDc3NWU5NDk1ZmNlNDBiMTg3In0"
-              //               )
-              //                 .then(function(res) {
-              //                   console.log(res);
-              //                 })
-              //                 .catch(function(res) {
-              //                   console.log(res);
-              //                 });
-              //             }}
-              //           >
-              //             Получить книгу!
-              //           </Button>
-              //         </div>
-              //       </div>
-              //     }
-              //   >
-              //     Как делать деньги из дома с пошаговым планом заработка 1000$ в
-              //     месяц
-              //   </Cell>
-              // </Group>
-            }
+            {this.state.promoBannerProps && (
+              <PromoBanner bannerData={this.state.promoBannerProps} />
+            )}
+
             {listStations}
           </List>
         )}
@@ -167,6 +133,10 @@ class StationsList extends React.Component {
   }
 
   componentDidMount() {
+    bridge.send("VKWebAppGetAds").then((promoBannerProps) => {
+      this.setState({ promoBannerProps });
+    });
+
     if (DataManager.getSearch())
       this.setState({ search: DataManager.getSearch() });
   }
@@ -181,7 +151,7 @@ class StationsList extends React.Component {
         style={{
           display: "flex",
           alignItems: "center",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
       >
         <Spinner size="medium" style={{ marginTop: 20 }} />

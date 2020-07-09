@@ -2,7 +2,7 @@ import React from "react";
 import { Map, Placemark } from "react-yandex-maps";
 import {
   Panel,
-  HeaderButton,
+  PanelHeaderButton,
   PanelHeader,
   View,
   Group,
@@ -12,7 +12,7 @@ import {
   Spinner,
   platform,
   Header,
-  IOS
+  IOS,
 } from "@vkontakte/vkui";
 import Icon24Back from "@vkontakte/icons/dist/24/back";
 import Loc from "../resources/Loc";
@@ -39,10 +39,10 @@ class Station extends React.Component {
         alignItems: "center",
         flexDirection: "column",
         width: "100%",
-        height: "300px"
+        height: "300px",
       },
       isLoadingMap: true,
-      station: DataManager.getStation()
+      station: DataManager.getStation(),
     };
   }
 
@@ -52,9 +52,9 @@ class Station extends React.Component {
     return (
       <PanelHeader
         left={
-          <HeaderButton onClick={history.goBack}>
+          <PanelHeaderButton onClick={history.goBack}>
             {osname === IOS ? "Отмена" : <Icon24Back />}
-          </HeaderButton>
+          </PanelHeaderButton>
         }
       >
         {Loc.StationTitle}
@@ -71,12 +71,12 @@ class Station extends React.Component {
 
     const mapState = {
       center: [this.state.station.lat, this.state.station.lng],
-      zoom: zoom
+      zoom: zoom,
     };
 
     const mapOptions = {
       yandexMapDisablePoiInteractivity: true,
-      suppressMapOpenBlock: true
+      suppressMapOpenBlock: true,
     };
 
     return (
@@ -95,14 +95,14 @@ class Station extends React.Component {
               iconImageHref:
                 "https://raw.githubusercontent.com/iPagar/donate-blood/master/src/img/heart.png",
               iconImageSize: [36, 36],
-              iconImageOffset: [-18, -36]
+              iconImageOffset: [-18, -36],
             }}
           />
           <Placemark
             geometry={DataManager.getGeo()}
             options={{
               preset: "islands#geolocationIcon",
-              iconColor: "#f60808"
+              iconColor: "#f60808",
             }}
           />
         </Map>
@@ -173,8 +173,8 @@ class Station extends React.Component {
     let tels = [];
     if (this.state.station.phones.length > 0)
       findNumbers(this.state.station.phones, "RU", {
-        v2: true
-      }).map(tel => tels.push(tel.number.formatNational()));
+        v2: true,
+      }).map((tel) => tels.push(tel.number.formatNational()));
 
     return (
       <React.Fragment>
@@ -202,9 +202,7 @@ class Station extends React.Component {
         <List>
           <Cell multiline before={<Icon24Place />}>
             <Link
-              href={`//maps.yandex.ru/?text=${this.state.station.city.title}, ${
-                this.state.station.address
-              }`}
+              href={`//maps.yandex.ru/?text=${this.state.station.city.title}, ${this.state.station.address}`}
             >
               {this.state.station.address}
             </Link>

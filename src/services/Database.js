@@ -1,16 +1,17 @@
-import Api from "../configs/Api.json";
+// import Api from "../configs/Api.json";
 
 class Database {
     static async getStations(city) {
         let stations = {};
         const cityId = city.id;
-        const wrapAPIKey = Api.wrapAPIKey;
-        const request = `https://wrapapi.com/use/iPagar/blood/stations/latest?city_id=${cityId}&wrapAPIKey=${wrapAPIKey}`;
+        // const wrapAPIKey = Api.wrapAPIKey;
+        // const request = `https://wrapapi.com/use/iPagar/blood/stations/latest?city_id=${cityId}&wrapAPIKey=${wrapAPIKey}`;
+        const request = `https://api2.donorsearch.org/api/blood_stations/?closed=false&city_id=${cityId}`;
 
         const response = await fetch(request);
         const json = await response.json();
 
-        stations = json.data.stations;
+        stations = json.results;
 
         stations = stations.filter(
             (station) =>
@@ -106,15 +107,21 @@ class Database {
 
     static async getCities(title) {
         let cities = {};
-        const wrapAPIKey = Api.wrapAPIKey;
-        const request = `https://wrapapi.com/use/iPagar/blood/cities/latest?title=${title
-            .replace(/^[A-Za-z0-9]+$/, "")
-            .trim()}&wrapAPIKey=${wrapAPIKey}`;
+        // const wrapAPIKey = Api.wrapAPIKey;
+        // const request = `https://wrapapi.com/use/iPagar/blood/cities/latest?title=${title
+        //     .replace(/^[A-Za-z0-9]+$/, "")
+        //     .trim()}&wrapAPIKey=${wrapAPIKey}`;
+        const request =
+            title.length > 0
+                ? `https://api2.donorsearch.org/api/blood_stations/search/?format=json&q=${title
+                      .replace(/^[A-Za-z0-9]+$/, "")
+                      .trim()}`
+                : `https://api2.donorsearch.org/api/cities/?page=1&format=json`;
 
         const response = await fetch(request);
         const json = await response.json();
 
-        cities = json.data ? json.data.cities : [];
+        cities = json ? (title.length > 0 ? json.cities : json.results) : [];
         return cities;
     }
 }

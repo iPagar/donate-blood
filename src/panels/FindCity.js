@@ -36,7 +36,8 @@ class FindCity extends React.Component {
 
   onChange = async (search) => {
     if (this._isMounted) {
-      this.setState({ search });
+      console.log(search.currentTarget.value);
+      this.setState({ search: search.currentTarget.value });
       await this.updateCities();
     }
   };

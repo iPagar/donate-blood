@@ -11,9 +11,6 @@ import {
   platform,
   IOS,
   Cell,
-  Button,
-  Avatar,
-  Group,
   PromoBanner,
 } from "@vkontakte/vkui";
 import StationsListCell from "../components/StationsListCell";
@@ -38,7 +35,7 @@ class StationsList extends React.Component {
   }
 
   onSearchChange = (search) => {
-    this.setState({ search });
+    this.setState({ search: search.currentTarget.value });
   };
 
   get stations() {

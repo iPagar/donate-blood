@@ -1,15 +1,15 @@
 {
-  "main.css": "/donate-blood/static/css/main.a0032a43.chunk.css",
-  "main.js": "/donate-blood/static/js/main.34f59a9a.chunk.js",
-  "main.js.map": "/donate-blood/static/js/main.34f59a9a.chunk.js.map",
-  "runtime~main.js": "/donate-blood/static/js/runtime~main.a18b42a9.js",
-  "runtime~main.js.map": "/donate-blood/static/js/runtime~main.a18b42a9.js.map",
-  "static/css/2.b7fedd49.chunk.css": "/donate-blood/static/css/2.b7fedd49.chunk.css",
-  "static/js/2.fad28ac4.chunk.js": "/donate-blood/static/js/2.fad28ac4.chunk.js",
-  "static/js/2.fad28ac4.chunk.js.map": "/donate-blood/static/js/2.fad28ac4.chunk.js.map",
-  "index.html": "/donate-blood/index.html",
-  "precache-manifest.897c4e1a2a5e049addfcec075e93ded8.js": "/donate-blood/precache-manifest.897c4e1a2a5e049addfcec075e93ded8.js",
-  "service-worker.js": "/donate-blood/service-worker.js",
-  "static/css/2.b7fedd49.chunk.css.map": "/donate-blood/static/css/2.b7fedd49.chunk.css.map",
-  "static/css/main.a0032a43.chunk.css.map": "/donate-blood/static/css/main.a0032a43.chunk.css.map"
+  "main.css": "./static/css/main.704f97d4.chunk.css",
+  "main.js": "./static/js/main.00537a65.chunk.js",
+  "main.js.map": "./static/js/main.00537a65.chunk.js.map",
+  "runtime~main.js": "./static/js/runtime~main.2c977d9b.js",
+  "runtime~main.js.map": "./static/js/runtime~main.2c977d9b.js.map",
+  "static/css/2.ba602159.chunk.css": "./static/css/2.ba602159.chunk.css",
+  "static/js/2.1f4e6a5b.chunk.js": "./static/js/2.1f4e6a5b.chunk.js",
+  "static/js/2.1f4e6a5b.chunk.js.map": "./static/js/2.1f4e6a5b.chunk.js.map",
+  "index.html": "./index.html",
+  "precache-manifest.2055d8a73ee6afca412c9f51f9c47c38.js": "./precache-manifest.2055d8a73ee6afca412c9f51f9c47c38.js",
+  "service-worker.js": "./service-worker.js",
+  "static/css/2.ba602159.chunk.css.map": "./static/css/2.ba602159.chunk.css.map",
+  "static/css/main.704f97d4.chunk.css.map": "./static/css/main.704f97d4.chunk.css.map"
 }
